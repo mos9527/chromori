@@ -4,6 +4,11 @@
   "main": "app.js",
   "repository": "github:cafeed28/chromori",
   "scripts": {
+    "start": "sh install.sh && node backend/app.mjs",
     "app": "node backend/app.mjs"
+  },
+  "dependencies": {
+    "pnpm": "^8.15.4",
+    "esbuild": "^0.19.5"
   }
 }

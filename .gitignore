@@ -1,6 +1,3 @@
 node_modules
 
-# Config
-config.json
-config.*.json
 activatedAchievements.json

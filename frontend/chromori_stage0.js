@@ -1,4 +1,21 @@
 /// <reference path="intellisense.d.ts"/>
+// Patching SDK Check
+window.navigator.plugins.namedItem = function (name) {
+    return null;
+}
+
+// Patching XHR FS
+let XMLHttpRequest_prototype_open = XMLHttpRequest.prototype.open
+XMLHttpRequest.prototype.open = function() {
+    // method, url, async, user, password    
+    let url = arguments[1];
+    // characters like $ might trigger 400s on some webservers
+    // put them in a header instead
+    if (arguments[1].includes("$")) arguments[1] = "fallback";
+    XMLHttpRequest_prototype_open.apply(this, arguments);
+    // always append the header afterwards    
+    this.setRequestHeader("x-fs-path", url);
+}
 
 // OneLoader compatibility
 var global = globalThis;
@@ -44,7 +61,7 @@ globalThis.chromori = {
 
     decoder: new TextDecoder(),
     encoder: new TextEncoder(),
-    apiUrl: `http://${window.location.hostname}:8000/api`,
+    apiUrl: `/api`,
 
     createAchievementElement: function (name, description, icon, id) {
         const el = document.createElement("div");

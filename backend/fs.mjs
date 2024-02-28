@@ -33,7 +33,7 @@ export default (app) => {
 
             if (await fs.isFile(res.chromoriPath)) {
                 res.contentType("text/plain");
-                return fs.createReadStream(res.chromoriPath).pipe(res);
+                return res.sendFile(res.chromoriPath);
             } else {
                 console.log(`fs.readFile: '${res.chromoriPath}' is not a file`);
             }

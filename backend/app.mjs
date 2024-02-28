@@ -32,13 +32,14 @@ if (!config.key) {
     }, 2000);
 } else {
     const app = express();
-    app.set("etag", false);
+    app.enable('etag')
 
     app.use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "x-chromori-path");
-        res.header("Cache-Control", "no-store");
-
+        res.header("Access-Control-Allow-Headers", "x-fs-path");
+        res.set('Cache-Control', 'public, max-age=31557600'); // one year
+        
         if (req.method === "OPTIONS") {
             return res.status(200).end();
         }
@@ -104,7 +105,7 @@ if (!config.key) {
     (await import("./fs.mjs")).default(app);
     (await import("./static.mjs")).default(app);
 
-    app.listen(8000, "0.0.0.0", () => {
-        console.log("chromori is running on http://localhost:8000");
+    app.listen(config.port, "0.0.0.0", () => {
+        console.log(`chromori is running on http://localhost:${config.port}`);
     });
 }

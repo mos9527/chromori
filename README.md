@@ -54,3 +54,29 @@ OMORI in a browser
 # Info
 
 - Steamworks SDK version: v1.58a
+
+# OMORI Dedicated Server w/ CapRover
+Apparently this is a thing you can do...
+
+**NOTE:** Some changes were made (compared to the original repo) to make the backend/frontend work on more platforms
+
+- Enabled ETag on most endpoints, allowing game assests to be cached.
+- Patched [`Native Client` check](https://github.com/Escartem/OmoriSource/blob/453d050c891f365b74063af18169851c857697b1/project/js/plugins/GTP_OmoriFixes.js#L379).TL;DR Older versions of Chrome has it and the game somehow uses this as a predicate to crash itself if detected.
+- Patched malformed URL paths, causing some older browsers (and most webservers,actually) to reject those requests
+- Patched fixed API endpoints so ports other than 8000 can be used. You can specifiy it in config.json.
+- Hardcoded the game key into the config file.
+
+## Game Files
+- Setup [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD)
+- Launch and login with your Steam account that owns OMORI
+```bash
+steamcmd +@sSteamCmdForcePlatformType windows +login <username> <password>
+```
+- Install OMORI via `app_update 1150690`
+- The game files should be found at `~/.steam/steam/steamcmd/steamapps/OMORI` (assuming `force_install_dir` is not specified)
+## chromori Setup 
+- Fork this repo
+- Create a CapRover app, add a `Persistent Directories` entry from some path to the actual game file path so the app can access the game files with it
+- Modify `config.json` so that the game file path is **the Persistent Directories app entry path**
+- From `Deployment` tab, Use **your own repo** (with method 3) to initialize the deployment
+- That's probably it...

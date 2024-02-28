@@ -18,30 +18,28 @@ export default (app) => {
         let url = req.url;
         if (url == "/") url += "index.html";
 
-        // there is some shit like '/img/characters/$DW_OMORI_RUN%(8).rpgmvp' that we don't need to decode
-        // at the same time there are files like /img/system/QTE%20Arrow.rpgmvp' that need to be decoded
-        // i hope there are no files with malformed names that need to be decoded
-        // (something like '/img/system/$SMTH%20%(3).rpgmv')
-        // TODO: use some method that can decode ^^ this ^^ idk
+        if (req.headers['x-fs-path'])
+            url = req.headers['x-fs-path']
+
         try {
-            url = decodeURIComponent(url);
-        } catch (e) {
-            // console.error(`decodeURIComponent('${url}') error`);
+            url = decodeURIComponent(url)
+        } catch(e) {
+            // pass
         }
 
         try {
             const fileOverlay = await resolveOverlay(url);
 
-            if (fileOverlay) {
+            if (fileOverlay) {     
                 return res.send(fileOverlay);
             } else {
                 const path = await fs.matchPath(join(wwwPath, url));
 
                 if (await fs.isFile(path)) {
                     if (extname(path) == ".wasm") res.contentType("application/wasm");
-                    return fs.createReadStream(path).pipe(res);
+                    return res.sendFile(path);
                 } else {
-                    console.log(`static: '${path}' is not a file`);
+                    console.log(`did not locate ${path} -> ${join(wwwPath, url)}`);
                 }
             }
         } catch (e) {

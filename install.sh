@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
-pushd frontend
+cd frontend
 pnpm i
 pnpm build
-popd
+cd ..
 
-pushd backend
+cd backend
 pnpm i
-popd
+cd ..
