@@ -111,20 +111,45 @@ globalThis.require = (id) => {
 
 // Save file Import/Export
 const env = JSON.parse(chromori.fetchSync("/env").res);
+const fileDialogue = {
+    el: document.createElement('input'),
+    open: function (callback) {
+        this.el.type = 'file';
+        this.el.addEventListener('change', (evt) => {
+            let file = evt.target.files[0];
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                callback(e.target.result);
+            }
+            reader.readAsText(file);
+        });
+        this.el.click();
+    },
+    save: function (data, filename) {
+        let blob = new Blob([data], { type: 'text/plain' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+}
 document.addEventListener("dblclick", (evt) => {
     let fname = window.prompt("Save file name (e.g. global.rpgsave, file1.rpgsave...)", "file1.rpgsave");
     if (!!fname) {
         let fpath = require('path').join(env._CWD,'www','save',fname);
-        if (confirm("Import (OK) or Export (Cancel) save file?")) {
-            let data = window.prompt("Save file data (copy & paste the content from the specified file)", "");
-            if (!!data)
-                require('fs').writeFileSync(fpath, data);
-            else
-                alert("Data not saved");
+        if (confirm("Import (OK) or Export (Cancel) save file?")) {           
+            fileDialogue.open((data)=>{
+                if (!!data)
+                    require('fs').writeFileSync(fpath, data);
+                else
+                    alert("Data not saved");
+            }) 
         } else {
             if (require('fs').existsSync(fpath)){
                 let data = require('fs').readFileSync(fpath);
-                window.prompt("Save file data", data);
+                fileDialogue.save(data, fname);
             } else {
                 alert("File not found");            
             }
