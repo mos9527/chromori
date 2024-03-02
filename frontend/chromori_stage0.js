@@ -114,14 +114,14 @@ const fileDialogue = {
     el: document.createElement('input'),
     open: function (callback) {
         this.el.type = 'file';
-        this.el.addEventListener('change', (evt) => {
+        this.el.onchange = (evt) => {
             let file = evt.target.files[0];
             let reader = new FileReader();
             reader.onload = function (e) {
                 callback(e.target.result);
             }
             reader.readAsText(file);
-        });
+        };
         this.el.click();
     },
     save: function (data, filename) {

@@ -15,7 +15,7 @@ const createErrorNoEnt = () => new Error(ERRNO_ENOENT);
 const localStorageFs = (path) => {
     const whitelist = [".rpgsave", "TITLEDATA"];
     if (whitelist.some((ext) => path.endsWith(ext))) {
-        console.log(`LocalFs: ${path}`)
+        // console.log(`LocalFs: ${path}`)
         return {
             stat: () => {                
                 return {
@@ -25,6 +25,7 @@ const localStorageFs = (path) => {
                 }
             },
             write: (data) => {
+                if (typeof data == "number") data = data.toString();
                 const buffer = Buffer.from(data);                
                 localStorage.setItem(path, buffer.toString('base64'));
             },
