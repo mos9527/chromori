@@ -60,6 +60,9 @@ Apparently this is a thing you can do...
 
 **NOTE:** Some changes were made (compared to the original repo) to make the backend/frontend work on more platforms
 
+- Save files are now stored locally (via `localStorage`)
+  To import/export a save file, **double click** anywhere on the page
+  and follow the prompt.
 - Enabled ETag on most endpoints, allowing game assests to be cached.
 - Patched [`Native Client` check](https://github.com/Escartem/OmoriSource/blob/453d050c891f365b74063af18169851c857697b1/project/js/plugins/GTP_OmoriFixes.js#L379).TL;DR Older versions of Chrome has it and the game somehow uses this as a predicate to crash itself if detected.
 - Patched malformed URL paths, causing some older browsers (and most webservers,actually) to reject those requests
