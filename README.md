@@ -67,7 +67,7 @@ Apparently this is a thing you can do...
 - Patched [`Native Client` check](https://github.com/Escartem/OmoriSource/blob/453d050c891f365b74063af18169851c857697b1/project/js/plugins/GTP_OmoriFixes.js#L379).TL;DR Older versions of Chrome has it and the game somehow uses this as a predicate to crash itself if detected.
 - Patched malformed URL paths, causing some older browsers (and most webservers,actually) to reject those requests
 - Patched fixed API endpoints so ports other than 8000 can be used. You can specifiy it in config.json.
-- Hardcoded the game key into the config file.
+- Added example `_config.json` file
 
 ## Game Files
 - Setup [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD)
