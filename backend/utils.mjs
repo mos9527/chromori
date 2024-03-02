@@ -127,6 +127,7 @@ function createConfigJSON(config = {}) {
         argv: config.argv || [],
         achievements: config.achievements || [],
         noSteam: config.noSteam || false,
+        port: config.port || 8000
     };
 
     return JSON.stringify(res, null, 4);
@@ -150,7 +151,7 @@ export const config = {
             'CHROMORI_PORT': 'port'
         };
         for (const [env, key] of Object.entries(ENV_MAPPING)) {
-            if (process.env[env]) data[key] = process.env[env];
+            if (process.env[env] && !!process.env[env]) data[key] = process.env[env];
         }
         return data;
     },
