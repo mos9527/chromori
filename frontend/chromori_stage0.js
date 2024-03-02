@@ -17,28 +17,6 @@ XMLHttpRequest.prototype.open = function() {
     this.setRequestHeader("x-fs-path", url);
 }
 
-// Save file Import/Export
-const env = JSON.parse(chromori.fetchSync("/env").res);
-document.addEventListener("dblclick", (evt) => {
-    let fname = window.prompt("Save file name (e.g. global.rpgsave, file1.rpgsave...)", "file1.rpgsave");
-    if (!!fname) {
-        let fpath = require('path').join(env._CWD,'www','save',fname);
-        if (confirm("Import (OK) or Export (Cancel) save file?")) {
-            let data = window.prompt("Save file data (copy & paste the content from the specified file)", "");
-            if (!!data)
-                require('fs').writeFileSync(fpath, data);
-            else
-                alert("Data not saved");
-        } else {
-            if (require('fs').existsSync(fpath)){
-                let data = require('fs').readFileSync(fpath);
-                window.prompt("Save file data", data);
-            } else {
-                alert("File not found");            
-            }
-        }
-    }
-}, true);
 // OneLoader compatibility
 var global = globalThis;
 
@@ -129,3 +107,27 @@ globalThis.require = (id) => {
     }
     return module;
 };
+
+
+// Save file Import/Export
+const env = JSON.parse(chromori.fetchSync("/env").res);
+document.addEventListener("dblclick", (evt) => {
+    let fname = window.prompt("Save file name (e.g. global.rpgsave, file1.rpgsave...)", "file1.rpgsave");
+    if (!!fname) {
+        let fpath = require('path').join(env._CWD,'www','save',fname);
+        if (confirm("Import (OK) or Export (Cancel) save file?")) {
+            let data = window.prompt("Save file data (copy & paste the content from the specified file)", "");
+            if (!!data)
+                require('fs').writeFileSync(fpath, data);
+            else
+                alert("Data not saved");
+        } else {
+            if (require('fs').existsSync(fpath)){
+                let data = require('fs').readFileSync(fpath);
+                window.prompt("Save file data", data);
+            } else {
+                alert("File not found");            
+            }
+        }
+    }
+}, true);
