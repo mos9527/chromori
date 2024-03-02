@@ -13,6 +13,7 @@ interface Chromori {
             type?: XMLHttpRequestResponseType;
             data?: any;
             json?: boolean;
+            method?: string;
         }
     ) => void;
 
@@ -23,6 +24,7 @@ interface Chromori {
             mime?: string;
             data?: XMLHttpRequestBodyInit;
             json?: boolean;
+            method?: string;
         }
     ) => { status: number; res?: any };
 

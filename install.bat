@@ -8,5 +8,3 @@ popd
 pushd backend
 call pnpm i
 popd
-
-pause

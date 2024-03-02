@@ -1,22 +1,4 @@
 /// <reference path="intellisense.d.ts"/>
-// Patching SDK Check
-window.navigator.plugins.namedItem = function (name) {
-    return null;
-}
-
-// Patching XHR FS
-let XMLHttpRequest_prototype_open = XMLHttpRequest.prototype.open
-XMLHttpRequest.prototype.open = function() {
-    // method, url, async, user, password    
-    let url = arguments[1];
-    // characters like $ might trigger 400s on some webservers
-    // put them in a header instead
-    if (arguments[1].includes("$")) arguments[1] = "fallback";
-    XMLHttpRequest_prototype_open.apply(this, arguments);
-    // always append the header afterwards    
-    this.setRequestHeader("x-fs-path", url);
-}
-
 // OneLoader compatibility
 var global = globalThis;
 
@@ -24,11 +6,11 @@ var global = globalThis;
  * @type {Chromori}
  */
 globalThis.chromori = {
-    fetch: function (method, path, callback, options = { type: undefined, data: undefined, json: false }) {
+    fetch: function (method, path, callback, options = { type: undefined, data: undefined, json: false, method: "POST" }) {
         const xhr = new XMLHttpRequest();
         if (options.type) xhr.responseType = options.type;
 
-        xhr.open("POST", this.apiUrl + method, true);
+        xhr.open(options.method || "POST", this.apiUrl + method, true);
         if (path) xhr.setRequestHeader("x-chromori-path", path); // TODO: why no encode
         xhr.addEventListener("load", () => {
             if (xhr.status != 200) {
@@ -42,11 +24,11 @@ globalThis.chromori = {
         xhr.send(options.data);
     },
 
-    fetchSync: function (method, path, options = { mime: undefined, data: undefined, json: false }) {
+    fetchSync: function (method, path, options = { mime: undefined, data: undefined, json: false, method: "POST" }) {
         const xhr = new XMLHttpRequest();
         if (options.mime) xhr.overrideMimeType(options.mime);
 
-        xhr.open("POST", this.apiUrl + method, false);
+        xhr.open(options.method || "POST", this.apiUrl + method, false);
         if (path) xhr.setRequestHeader("x-chromori-path", encodeURIComponent(path)); // TODO: why encode
         xhr.send(options.data);
 
@@ -108,6 +90,23 @@ globalThis.require = (id) => {
     return module;
 };
 
+// Patching SDK Check
+window.navigator.plugins.namedItem = function (name) {
+    return null;
+}
+
+// Patching XHR FS
+let XMLHttpRequest_prototype_open = XMLHttpRequest.prototype.open
+XMLHttpRequest.prototype.open = function() {
+    // method, url, async, user, password    
+    let url = arguments[1];
+    // characters like $ might trigger 400s on some webservers
+    // put them in a header instead
+    if (arguments[1].includes("$")) arguments[1] = `fallback?path=${require('fs').pathQuery(arguments[1])}`;
+    XMLHttpRequest_prototype_open.apply(this, arguments);
+    // always append the header afterwards    
+    this.setRequestHeader("x-fs-path", url);
+}
 
 // Save file Import/Export
 const env = JSON.parse(chromori.fetchSync("/env").res);

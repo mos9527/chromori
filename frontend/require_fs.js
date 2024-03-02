@@ -41,6 +41,9 @@ const localStorageFs = (path) => {
 
 module.exports = {
     localStorageFs: localStorageFs,
+    pathQuery: (path) => {
+        return encodeURIComponent(path);
+    },
     readFile(path, callback) {
         if (!callback) return;
 
@@ -48,7 +51,7 @@ module.exports = {
         if (!!localFs) return callback(null, localFs.read());
 
         chromori.fetch(
-            "/fs/readFile",
+            `/fs/readFile?path=${this.pathQuery(path)}`,
             path,
             (status, res) => {
                 if (status != 200) {
@@ -58,7 +61,7 @@ module.exports = {
                     callback(null, Buffer.from(res));
                 }
             },
-            { type: "arraybuffer" }
+            { type: "arraybuffer", method: "GET" }
         );
     },
 
@@ -69,9 +72,14 @@ module.exports = {
         let buffer = undefined;
         if (!!localFs) buffer = localFs.read();
         else {
-            const { status, res } = chromori.fetchSync("/fs/readFile", path, {
-                mime: "text/plain; charset=x-user-defined",
-            });
+            const { status, res } = chromori.fetchSync(
+                `/fs/readFile?path=${this.pathQuery(path)}`,
+                path, 
+                {
+                    mime: "text/plain; charset=x-user-defined",
+                    method: "GET"
+                }
+            );
             if (status != 200) throw createErrorNoEnt();
             buffer = Buffer.from(res, "ascii");
         }
