@@ -140,7 +140,7 @@ export const config = {
     },
     async load() {
         if (!(await fs.exists(configPath))) await this.save();
-        config = JSON.parse(await nfsp.readFile(configPath, "utf8"));    
+        let data = JSON.parse(await nfsp.readFile(configPath, "utf8"));    
         // Environment variable overrides
         const ENV_MAPPING = {
             'CHROMORI_GAME_PATH': 'gamePath',
@@ -150,9 +150,9 @@ export const config = {
             'CHROMORI_PORT': 'port'
         };
         for (const [env, key] of Object.entries(ENV_MAPPING)) {
-            if (process.env[env]) config[key] = process.env[env];
+            if (process.env[env]) data[key] = process.env[env];
         }
-        return config;
+        return data;
     },
 };
 
