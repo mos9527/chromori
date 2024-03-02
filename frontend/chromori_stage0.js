@@ -18,10 +18,11 @@ XMLHttpRequest.prototype.open = function() {
 }
 
 // Save file Import/Export
+const env = JSON.parse(chromori.fetchSync("/env").res);
 document.addEventListener("dblclick", (evt) => {
     let fname = window.prompt("Save file name (e.g. global.rpgsave, file1.rpgsave...)", "file1.rpgsave");
     if (!!fname) {
-        let fpath = `C:\\Program Files (x86)\\Steam\\steamapps\\common\\OMORI\\www\\save\\${fname}`;
+        let fpath = require('path').join(env._CWD,'www','save',fname);
         if (confirm("Import (OK) or Export (Cancel) save file?")) {
             let data = window.prompt("Save file data (copy & paste the content from the specified file)", "");
             if (!!data)

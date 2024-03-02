@@ -15,6 +15,7 @@ const createErrorNoEnt = () => new Error(ERRNO_ENOENT);
 const localStorageFs = (path) => {
     const whitelist = [".rpgsave", "TITLEDATA"];
     if (whitelist.some((ext) => path.endsWith(ext))) {
+        console.log(`LocalFs: ${path}`)
         return {
             stat: () => {                
                 return {
