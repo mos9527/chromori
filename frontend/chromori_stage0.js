@@ -110,19 +110,28 @@ XMLHttpRequest.prototype.open = function() {
 
 // Save file Import/Export
 const env = JSON.parse(chromori.fetchSync("/env").res);
-const fileDialogue = {
-    el: document.createElement('input'),
+const fileDialogue = {    
     open: function (callback) {
-        this.el.type = 'file';
-        this.el.onchange = (evt) => {
+        let el = document.createElement('input');         
+        el.type = 'file';
+        el.onchange = (evt) => {
             let file = evt.target.files[0];
             let reader = new FileReader();
             reader.onload = function (e) {
                 callback(e.target.result);
             }
-            reader.readAsText(file);
+            try {
+                reader.readAsText(file);
+            } catch (e) {
+                callback(null);
+            }
         };
-        this.el.click();
+        let evt = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+        });
+        el.dispatchEvent(evt);
     },
     save: function (data, filename) {
         let blob = new Blob([data], { type: 'text/plain' });
@@ -134,24 +143,31 @@ const fileDialogue = {
         URL.revokeObjectURL(url);
     }
 }
-document.addEventListener("dblclick", (evt) => {
-    let fname = window.prompt("Save file name (e.g. global.rpgsave, file1.rpgsave...)", "file1.rpgsave");
-    if (!!fname) {
-        let fpath = require('path').join(env._CWD,'www','save',fname);
-        if (confirm("Import (OK) or Export (Cancel) save file?")) {           
-            fileDialogue.open((data)=>{
-                if (!!data)
-                    require('fs').writeFileSync(fpath, data);
-                else
-                    alert("Data not saved");
-            }) 
+const saveImportExport = (fname) => {
+    let fpath = require('path').join(env._CWD,'www','save',fname);
+    if (confirm("Import (OK) or Export (Cancel) save file?")) {           
+        fileDialogue.open((data)=>{
+            if (!!data)
+                require('fs').writeFileSync(fpath, data);
+            else
+                alert("Data not imported");
+        }) 
+    } else {
+        if (require('fs').existsSync(fpath)){
+            let data = require('fs').readFileSync(fpath);
+            fileDialogue.save(data, fname);
         } else {
-            if (require('fs').existsSync(fpath)){
-                let data = require('fs').readFileSync(fpath);
-                fileDialogue.save(data, fname);
-            } else {
-                alert("File not found");            
-            }
+            alert("File not found");            
         }
     }
+}
+
+document.addEventListener("dblclick", (evt) => {
+    const saveFiles = ["global.rpgsave", "file1.rpgsave"];
+    saveFiles.forEach((fname) => {
+        if (window.confirm(`Save File: Import/Export ${fname}?`)) {           
+            saveImportExport(fname);
+            return;
+        }
+    });
 }, true);

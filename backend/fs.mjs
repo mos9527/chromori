@@ -46,13 +46,15 @@ export default (app) => {
     });
 
     app.all("/api/fs/writeFile", async (req, res) => {
-        try {
-            await fs.writeFile(res.chromoriPath, req.body);
-            res.status(200).end();
-        } catch (e) {
-            console.error(e);
-            res.status(500).end();
-        }
+        console.warn("fs.writeFile: deprecated for security reasons");
+        res.status(200).end();
+        // try {
+        //     await fs.writeFile(res.chromoriPath, req.body);
+        //     res.status(200).end();
+        // } catch (e) {
+        //     console.error(e);
+        //     res.status(500).end();
+        // }
     });
 
     app.all("/api/fs/readDir", async (req, res) => {
@@ -65,23 +67,27 @@ export default (app) => {
     });
 
     app.all("/api/fs/mkDir", async (req, res) => {
-        try {
-            await fs.mkdir(res.chromoriPath);
-            res.status(200).end();
-        } catch (e) {
-            console.error(e);
-            res.status(500).end();
-        }
+        console.warn("fs.writeFile: deprecated for security reasons");
+        res.status(200).end();
+        // try {
+        //     await fs.mkdir(res.chromoriPath);
+        //     res.status(200).end();
+        // } catch (e) {
+        //     console.error(e);
+        //     res.status(500).end();
+        // }
     });
 
     app.all("/api/fs/unlink", async (req, res) => {
-        try {
-            await fs.unlink(res.chromoriPath);
-            res.status(200).end();
-        } catch (e) {
-            console.error(e);
-            res.status(500).end();
-        }
+        console.warn("fs.unlink: deprecated for security reasons");
+        res.status(200).end();
+        // try {
+        //     await fs.unlink(res.chromoriPath);
+        //     res.status(200).end();
+        // } catch (e) {
+        //     console.error(e);
+        //     res.status(500).end();
+        // }
     });
 
     app.all("/api/fs/stat", async (req, res) => {
@@ -95,12 +101,14 @@ export default (app) => {
     });
 
     app.all("/api/fs/rename", async (req, res) => {
-        try {
-            await fs.rename(res.chromoriPath, req.body);
-        } catch (e) {
-            console.error(e);
-        }
-
+        console.warn("fs.rename: deprecated for security reasons");
         res.status(200).end();
+        // try {
+        //     await fs.rename(res.chromoriPath, req.body);
+        // } catch (e) {
+        //     console.error(e);
+        // }
+
+        // res.status(200).end();
     });
 };
